@@ -6,12 +6,15 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
+import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -44,7 +47,7 @@ public class ChatClient extends JFrame {
 	//初始化GUI
 	public void launchFrame(){
 		
-		int w=444; int h=444;
+		int w=444; int h=500;
 		
 		setLocation(LocationUtil.getCenterLocation(w,h));
 		setSize(w,h);
@@ -65,6 +68,13 @@ public class ChatClient extends JFrame {
 		
 		add(textArea,BorderLayout.CENTER);
 		add(textField,BorderLayout.SOUTH);
+		
+		try {
+			BufferedImage icon=ImageIO.read(Thread.currentThread().getContextClassLoader().getResourceAsStream("org/cc/chat/resource/chat_icon.png"));
+			setIconImage(icon);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 //		pack();
 		
@@ -115,8 +125,8 @@ public class ChatClient extends JFrame {
 		for(int i=0;i<message.length();i++){
 			char c=message.charAt(i);
 			formatedMessage.append(c);
-			count= (c=='\n'?0:count+1);
-			if(count==getWidth()/15){
+			count= (c=='\n'?0:count+(StringUtil.isLetterOrDigit(c)?1:2));
+			if(count>=getWidth()/8){
 				formatedMessage.append('\n');
 				count=0;
 			}
