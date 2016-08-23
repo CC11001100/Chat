@@ -14,9 +14,10 @@
 - 服务器和客户端之间可以通过简单的**指令交换**进行行为控制
 
 
-预览效果：
+预览效果：  
 
-![]()
+这是一个悲伤的故事...
+![预览](https://raw.githubusercontent.com/BenDanChen/Chat/master/%E7%9B%B8%E5%85%B3%E8%B5%84%E6%BA%90/Chat%E9%A2%84%E8%A7%88_002.png)
 
 
 
