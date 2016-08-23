@@ -48,6 +48,7 @@ public class ChatServer implements CommandRepo {
 				Client client=new Client(socket);
 				clientSets.add(client);
 				new Thread(client).start();
+System.out.println("一个客户端上线了...");				
 			}
 			
 		} catch (BindException e) {
@@ -113,6 +114,8 @@ public class ChatServer implements CommandRepo {
 					nickname=randName();
 				}
 				
+				receiveMessage(COMMAND_NICKNAME+" "+nickname);
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -144,6 +147,8 @@ public class ChatServer implements CommandRepo {
 					//判定客户端发送的指令
 					if(StringUtil.startWithIgnoreCase(content,COMMAND_NICKNAME)){
 						
+						String command=content;
+						
 						//修改昵称指令
 						content=content.substring(COMMAND_NICKNAME.length()).trim();
 						
@@ -160,6 +165,8 @@ public class ChatServer implements CommandRepo {
 						.append(content).append("】").append("\n");
 						
 						this.nickname=content;
+						
+						receiveMessage(command);
 						
 					}else if(StringUtil.startWithIgnoreCase(content,COMMAND_TAIL)){
 						
@@ -178,12 +185,16 @@ public class ChatServer implements CommandRepo {
 						String toWho=StringUtil.firstWord(content);
 						String mesg=content.substring(toWho.length());
 						
+						//不做检查，允许对自己发悄悄话，人类已经够寂寞的了...
+						
 						//找到目标，发送消息
+						StringBuffer receiveContent=new StringBuffer();
+						receiveContent.append(nickname).append("：").append(mesg).append("\n");
 						boolean sendOk=false;
 						for(int i=0;i<clientSets.size();i++){
 							Client c=clientSets.get(i);
-							if(toWho.equalsIgnoreCase(c.nickname)){
-								c.receiveMessage(mesg);
+							if(toWho.equals(c.nickname)){
+								c.receiveMessage(receiveContent.toString());
 								sendOk=true;
 								break;
 							}
@@ -191,7 +202,7 @@ public class ChatServer implements CommandRepo {
 						
 						//给客户端反馈
 						StringBuffer sb=new StringBuffer();
-						sb.append("系统消息：发送消息给").append(toWho);
+						sb.append("系统消息：发送悄悄话[").append(mesg).append("]给").append("[").append(toWho).append("]");
 						if(sendOk){
 							receiveMessage(sb.append("成功\n").toString());
 						}else{
@@ -224,6 +235,7 @@ public class ChatServer implements CommandRepo {
 			} catch (IOException e) {
 //				e.printStackTrace();
 				System.out.println("一个客户端下线了...");
+				disconnection();
 			}finally{
 				disconnection();
 			}
@@ -246,6 +258,7 @@ public class ChatServer implements CommandRepo {
 				dis.close();
 				dos.close();
 				socket.close();
+				clientSets.remove(this);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

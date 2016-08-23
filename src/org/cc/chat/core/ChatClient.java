@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  * @author cc
  *
  */
-public class ChatClient extends JFrame {
+public class ChatClient extends JFrame implements CommandRepo {
 
 	public static void main(String[] args) {
 		
@@ -53,7 +53,7 @@ public class ChatClient extends JFrame {
 		setSize(w,h);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		setTitle("局域网聊天系统 ");
+		setTitle("局域网聊天系统  - 随机昵称");
 		
 		setLayout(new BorderLayout());
 		
@@ -119,6 +119,16 @@ public class ChatClient extends JFrame {
 	
 	//接收信息，显示出来
 	public void receiveMessage(String message){
+		
+		//检测服务器回送消息
+		if(StringUtil.startWithIgnoreCase(message,COMMAND_NICKNAME)){
+			//修改昵称
+			String nickname=message.replace(COMMAND_NICKNAME,"").trim();
+			setTitle("局域网聊天系统  - "+nickname);
+			return ;
+		}
+		
+		
 		//对内容加了自动换行
 		int count=0;
 		StringBuilder formatedMessage=new StringBuilder();
@@ -178,6 +188,8 @@ public class ChatClient extends JFrame {
 				receiveMessage(message.toString());
 				textField.setText(inputContent);
 				return ;
+			}else if(StringUtil.startWithIgnoreCase(inputContent,COMMAND_NICKNAME)){
+				
 			}
 			
 			lastSendMessageTime=new Date().getTime();

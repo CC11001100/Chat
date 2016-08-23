@@ -33,7 +33,7 @@ public class StringUtil {
 		StringBuffer sb=new StringBuffer();
 		for(int i=0;i<s.length();i++){
 			char c=s.charAt(i);
-			if(i!=' ')sb.append(c);
+			if(c!=' ')sb.append(c);
 			else return sb.toString();
 		}
 		return sb.toString();
